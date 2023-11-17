@@ -1,0 +1,23 @@
+.text-jost {
+  font-family: $fontJost;
+}
+.text-lato {
+  font-family: $fontLato;
+}
+.font-bold {
+  font-weight: bold;
+}
+
+.font-normal {
+  font-weight: normal;
+}
+
+.text-white {
+  color: $color-white;
+}
+.text-black {
+  color: $color-black;
+}
+.sentenceCase {
+  @include sentence-case();
+}

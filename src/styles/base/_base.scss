@@ -1,0 +1,57 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+// scroll bar ui
+* {
+  scrollbar-color: #002444 #d1d1d1;
+  scrollbar-width: thin;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  @include breakpoint(tablet) {
+    width: 5px;
+    height: 5px;
+  }
+}
+// ÷
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  @include breakpoint(tablet) {
+    background: transparent;
+  }
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #002444;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #1b507e;
+}
+
+html {
+  // This defines what 1rem is
+  font-size: 62.5%;
+  font-family: $fontJost;
+  color: $color-black;
+}
+
+body {
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+  scroll-behavior: smooth;
+}

@@ -1,0 +1,66 @@
+// Responsiveness
+@mixin breakpoint($point) {
+  @if $point == desktop {
+    @media only screen and (min-width: 1200px) {
+      @content;
+    }
+  }
+  @if $point == tablet {
+    @media only screen and (max-width: 1199px) {
+      @content;
+    }
+  }
+  @if $point == tablet-sm {
+    @media only screen and (max-width: 768px) {
+      @content;
+    }
+  }
+  @if $point == mobile-lg {
+    @media only screen and (max-width: 581px) {
+      @content;
+    }
+  }
+  @if $point == mobile-medium {
+    @media only screen and (max-width: 375px) {
+      @content;
+    }
+  }
+  @if $point == mobile-small {
+    @media only screen and (max-width: 320px) {
+      @content;
+    }
+  }
+}
+
+// dynamic sizing based on the default size & vw of the app
+@mixin dynamic-size($min-val, $max-val) {
+  font-size: dync-clamp($min-val, $max-val);
+}
+@mixin dynamic-width($min-val, $max-val) {
+  width: dync-clamp($min-val, $max-val);
+}
+@mixin dynamic-height($min-val, $max-val) {
+  height: dync-clamp($min-val, $max-val);
+}
+
+// Dynamic fade animations
+@mixin dynamic-fadein($duration: 0.2s) {
+  animation-name: fadeInReveal;
+  animation-duration: $duration;
+  animation-fill-mode: both;
+}
+
+@mixin dynamic-fadeout($duration: 0.2s) {
+  animation-name: fadeOutReveal;
+  animation-duration: $duration;
+  animation-fill-mode: both;
+}
+
+// Capitalize first letter in a sentence
+@mixin sentence-case() {
+  text-transform: lowercase;
+
+  &:first-letter {
+    text-transform: uppercase;
+  }
+}

@@ -1,0 +1,16 @@
+// styles for abstracts
+@import "./abstracts/mixins";
+@import "./abstracts/variables";
+
+// styles for base
+@import "./base/animations";
+@import "./base/base";
+@import "./base/reset";
+@import "./base/utilities";
+
+// styles for components
+// @import "./components/";
+
+// styles for pages
+@import "./pages/home";
+@import "./pages/upload";
