@@ -1,9 +1,13 @@
 import { Header } from "../../components/Header";
+import { UploadedCatList } from "./components/UploadedCatList";
 
 export const Home = () => {
   return (
-    <div>
+    <main className="homepage">
       <Header />
-    </div>
+      <div className="homepage_content">
+        <UploadedCatList />
+      </div>
+    </main>
   );
 };
