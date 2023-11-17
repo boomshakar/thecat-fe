@@ -1,9 +1,21 @@
 import { ArrowIcon, HeartIcon } from "../../../assets/icons";
+import useFetch from "../../../hooks/useFetch";
 
-const UploadedCatListItem = () => (
+type CatListType = {
+  breeds: [];
+  id?: string;
+  url: string;
+  width?: number;
+  height?: number;
+  sub_id?: string;
+  created_at: Date;
+  original_filename: string;
+};
+
+const UploadedCatListItem = ({ data }: { data?: CatListType }) => (
   <div className="cat_list_item">
     <div className="cat_list_item_img">
-      <img src="https://pater-store-demo.myshopify.com/cdn/shop/products/9.1.jpg?v=1679023320" alt="" />
+      <img src={data?.url} alt={data?.original_filename} />
     </div>
     <div className="cat_list_item_cta">
       <button className="upvote">
@@ -23,13 +35,13 @@ const UploadedCatListItem = () => (
 );
 
 export const UploadedCatList = () => {
+  const { data, loading } = useFetch<CatListType[]>("/images/?limit=10&page=0&order=DESC");
+
   return (
     <section className="cat_list_sect text-center">
       <h2 className="cat_list_sect__title text-500">Uploaded Cat List</h2>
       <div className="cat_list">
-        {Array.from({ length: 6 }).map((_val: unknown, i) => (
-          <UploadedCatListItem key={i} />
-        ))}
+        {loading ? <div>Loading ...</div> : data?.map((cat) => <UploadedCatListItem key={cat.id} data={cat} />)}
       </div>
     </section>
   );
