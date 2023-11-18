@@ -1,6 +1,6 @@
 import leadBannerImg from "../../assets/image/lead_home_banner.webp";
 
-import { CatImageUpload } from "../../styles/components/CatImageUpload";
+import { CatImageUpload } from "../../components/CatImageUpload";
 
 export const Upload = () => {
   return (

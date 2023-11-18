@@ -184,6 +184,24 @@
           margin: auto;
           text-align: center;
         }
+        .error_resp {
+          display: block;
+          text-align: center;
+          position: absolute;
+          bottom: var(--dialog-padding);
+          left: 0;
+          right: 0;
+          color: #b40808;
+        }
+      }
+
+      .is-loading-icon {
+        border-radius: 50%;
+        border: 0.7rem solid;
+        border-color: $color-white;
+        width: 9rem;
+        height: 9rem;
+        border-right-color: transparent;
       }
     }
   }

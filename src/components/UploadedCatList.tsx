@@ -8,10 +8,14 @@ const UploadedCatListItem = ({
   data,
   handleCatFavouriteToggle,
   voteUpDownHandler,
+  actionOnFav,
+  loadingId,
 }: {
   data: Cat;
   handleCatFavouriteToggle: (data: Cat) => void;
   voteUpDownHandler: (data: Cat, value: number) => void;
+  actionOnFav: boolean;
+  loadingId: boolean;
 }) => {
   const isVotedUp = data.votes.userVoteValue === 1;
   const isVotedDown = data.votes.userVoteValue === -1;
@@ -51,6 +55,13 @@ const UploadedCatListItem = ({
 
       <button className="favourite_cat" onClick={() => handleCatFavouriteToggle(data)}>
         <HeartIcon type={data.favourite.status ? "filled" : "default"} />
+        {loadingId && actionOnFav ? (
+          <div className="is-loading">
+            <div className="is-loading-icon"></div>
+          </div>
+        ) : (
+          <></>
+        )}
       </button>
     </div>
   );
@@ -59,20 +70,34 @@ const UploadedCatListItem = ({
 export const UploadedCatList = () => {
   const [allCatImages, setAllCatImages] = useState<Cat[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [imLoading, setImLoading] = useState({ id: [""] });
 
   const { data: listOfCats } = useFetch<Cat[]>("/images/?limit=10&page=0&order=DESC");
   const { data: listOfFavouritedCats, triggerFetch: refetchListOfFavouritedCats } =
     useFetch<FavouriteCatResult[]>("/favourites");
   const { data: listOfCatVotes, triggerFetch: refetchListOfCatVotes } = useFetch<CatVoteResult[]>("/votes");
 
-  const { triggerFetch: addToFavourite } = useFetch<FavouriteCatResult[]>("/favourites", false, {
-    onSuccess: () => refetchListOfFavouritedCats(),
+  const { triggerFetch: addToFavourite, loading: isAddingFav } = useFetch<FavouriteCatResult[]>("/favourites", false, {
+    onSuccess: () => {
+      refetchListOfFavouritedCats();
+      setImLoading({ id: [""] });
+    },
   });
-  const { triggerFetch: removeFromFavourite } = useFetch<FavouriteCatResult[]>("/favourites", false, {
-    onSuccess: () => refetchListOfFavouritedCats(),
-  });
+  const { triggerFetch: removeFromFavourite, loading: isRemovingFav } = useFetch<FavouriteCatResult[]>(
+    "/favourites",
+    false,
+    {
+      onSuccess: () => {
+        refetchListOfFavouritedCats();
+        setImLoading({ id: [""] });
+      },
+    }
+  );
   const { triggerFetch: voteForACat } = useFetch<FavouriteCatResult[]>("/vote", false, {
-    onSuccess: () => refetchListOfCatVotes(),
+    onSuccess: () => {
+      refetchListOfCatVotes();
+      setImLoading({ id: [""] });
+    },
   });
   const { triggerFetch: removeFromVote } = useFetch<FavouriteCatResult[]>("/votes", false, {
     onSuccess: () => refetchListOfCatVotes(),
@@ -85,6 +110,7 @@ export const UploadedCatList = () => {
   }, [listOfCatVotes, listOfCats, listOfFavouritedCats]);
 
   const handleCatFavouriteToggle = ({ id, favourite }: Cat) => {
+    setImLoading((prevData) => ({ id: [...prevData.id, id] }));
     if (!favourite.status) {
       addToFavourite({
         method: "POST",
@@ -140,6 +166,8 @@ export const UploadedCatList = () => {
               data={cat}
               handleCatFavouriteToggle={handleCatFavouriteToggle}
               voteUpDownHandler={voteUpDownHandler}
+              actionOnFav={isAddingFav || isRemovingFav}
+              loadingId={imLoading.id.includes(cat.id)}
             />
           ))
         )}

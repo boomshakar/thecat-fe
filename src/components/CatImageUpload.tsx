@@ -1,7 +1,21 @@
-import React, { useEffect } from "react";
-import { UploadIcon } from "../../assets/icons";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UploadIcon } from "../assets/icons";
+import useFetch from "../hooks/useFetch";
 
 export const CatImageUpload = () => {
+  const [file, setFile] = useState<FileList | null>(null);
+
+  const navigate = useNavigate();
+
+  const {
+    triggerFetch: uploadImage,
+    loading,
+    error,
+  } = useFetch("/images/upload", false, {
+    onSuccess: () => navigate("/"),
+  });
+
   useEffect(() => {
     const supportDrag = () => {
       const div = document.createElement("div");
@@ -37,9 +51,27 @@ export const CatImageUpload = () => {
     }
   }, []);
 
+  const imageUploadHanlder = useCallback(() => {
+    if (file) {
+      const formPayload = new FormData();
+      formPayload.append("file", file[0]);
+      formPayload.append("sub_id", "bala");
+      uploadImage({
+        method: "POST",
+        url: "/images/upload",
+        body: formPayload,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file]);
+
+  useEffect(() => {
+    imageUploadHanlder();
+  }, [imageUploadHanlder]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileInputEl = document.querySelector(".file-input");
-    console.log({ files: e.target.files });
+    setFile(e.target.files);
     fileInputEl && fileInputEl.classList.remove("file-input--active");
   };
 
@@ -58,9 +90,17 @@ export const CatImageUpload = () => {
               </span>
             </span>
           </div>
-          <span id="js-file-name" className="file-name">
-            No file selected
-          </span>
+          {loading ? (
+            <div className="is-loading">
+              <div className="is-loading-icon"></div>
+            </div>
+          ) : error ? (
+            <span className="font-lato font-700 error_resp">Sorry, an error occured. Pleas try again later</span>
+          ) : !file ? (
+            <span id="js-file-name" className="file-name">
+              No file selected
+            </span>
+          ) : null}
         </div>
       </label>
     </div>
