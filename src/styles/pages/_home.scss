@@ -4,7 +4,7 @@
   .head_banner {
     position: relative;
     overflow: hidden;
-    max-height: 50vh;
+    max-height: 35vh;
     // max-height: 50rem;
 
     &_img {
@@ -16,6 +16,7 @@
       animation-timing-function: ease;
       animation-duration: 5s;
       transform-origin: 50% 50% 0;
+      top: -20rem;
       &::before {
         position: absolute;
         display: block;
@@ -30,7 +31,6 @@
       img {
         object-fit: cover;
         position: relative;
-        top: -20rem;
         width: 100%;
         height: auto;
         min-height: 50rem;
@@ -44,11 +44,22 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2;
+      animation: fadeInReveal 1.5s linear;
+      width: 80%;
       h1 {
         font-size: 4rem;
       }
       p {
         font-size: 2rem;
+      }
+
+      @include breakpoint(mobile-lg) {
+        h1 {
+          font-size: 2.5rem;
+        }
+        p {
+          font-size: 1.5rem;
+        }
       }
     }
   }
@@ -84,10 +95,11 @@
       .cat_list {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(27.5rem, 1fr));
-        gap: 0.9rem 2rem;
+        gap: 1.3rem 2rem;
         max-width: 120rem;
         margin: auto;
         margin-top: 5rem;
+        animation: fadeInReveal 1.5s linear;
 
         &_item {
           height: 100%;

@@ -1,71 +1,8 @@
 import { useEffect, useState } from "react";
-import { ArrowIcon, HeartIcon } from "../assets/icons";
 import useFetch from "../hooks/useFetch";
 import { Cat, CatVoteResult, FavouriteCatResult } from "../types";
 import { mergeCatListData } from "../utils";
-
-const UploadedCatListItem = ({
-  data,
-  handleCatFavouriteToggle,
-  voteUpDownHandler,
-  actionOnFav,
-  loadingId,
-}: {
-  data: Cat;
-  handleCatFavouriteToggle: (data: Cat) => void;
-  voteUpDownHandler: (data: Cat, value: number) => void;
-  actionOnFav: boolean;
-  loadingId: boolean;
-}) => {
-  const isVotedUp = data.votes.userVoteValue === 1;
-  const isVotedDown = data.votes.userVoteValue === -1;
-  const totalVotes = data.votes.totalUpvotes - data.votes.totalDownvotes;
-
-  return (
-    <div className="cat_list_item">
-      <div className="cat_list_item_img">
-        <img src={data.url} alt={data.original_filename} />
-      </div>
-
-      <div className="cat_list_item_cta">
-        <button
-          className={`font-lato upvote${isVotedUp ? " active" : ""}`}
-          onClick={() => voteUpDownHandler(data, 1)}
-          // disabled={isVotedUp}
-        >
-          <ArrowIcon type="upvote" />
-          {/* <span>{`${data.votes.totalUpvotes} ${data.votes.totalUpvotes > 1 ? "votes" : "vote"}`}</span> */}
-        </button>
-
-        <button
-          className={`font-jost downvote${isVotedDown ? " active" : ""}`}
-          onClick={() => voteUpDownHandler(data, -1)}
-          // disabled={isVotedDown}
-        >
-          <ArrowIcon type="downvote" />
-          {/* <span>{`${data.votes.totalDownvotes} ${data.votes.totalDownvotes > 1 ? "votes" : "vote"}`}</span> */}
-        </button>
-      </div>
-
-      <div className="cat_list_item_score">
-        <span className="text-center font-lato">
-          Scores:&nbsp;&nbsp;<span className="score_value">{totalVotes}</span>
-        </span>
-      </div>
-
-      <button className="favourite_cat" onClick={() => handleCatFavouriteToggle(data)}>
-        <HeartIcon type={data.favourite.status ? "filled" : "default"} />
-        {loadingId && actionOnFav ? (
-          <div className="is-loading">
-            <div className="is-loading-icon"></div>
-          </div>
-        ) : (
-          <></>
-        )}
-      </button>
-    </div>
-  );
-};
+import { UploadedCatListItem } from "./UploadedCatListItem";
 
 export const UploadedCatList = () => {
   const [allCatImages, setAllCatImages] = useState<Cat[] | undefined>(undefined);
@@ -106,18 +43,19 @@ export const UploadedCatList = () => {
   useEffect(() => {
     if (!!listOfCats && !!listOfFavouritedCats && !!listOfCatVotes) {
       setAllCatImages(mergeCatListData(listOfCats, listOfFavouritedCats, listOfCatVotes, setIsLoading));
-    }
+    } // else possible handle errors
   }, [listOfCatVotes, listOfCats, listOfFavouritedCats]);
 
   const handleCatFavouriteToggle = ({ id, favourite }: Cat) => {
     setImLoading((prevData) => ({ id: [...prevData.id, id] }));
+    const getUserId = localStorage?.getItem("boomcat-uid");
     if (!favourite.status) {
       addToFavourite({
         method: "POST",
         url: "/favourites",
         body: JSON.stringify({
           image_id: id,
-          sub_id: "bala",
+          sub_id: getUserId,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -132,6 +70,7 @@ export const UploadedCatList = () => {
   };
 
   const voteUpDownHandler = ({ id, votes }: Cat, value: number) => {
+    const getUserId = localStorage?.getItem("boomcat-uid");
     if (votes.voteId && votes.userVoteValue === value) {
       removeFromVote({
         url: `/votes/${votes.voteId}`,
@@ -143,7 +82,7 @@ export const UploadedCatList = () => {
         url: "/votes",
         body: JSON.stringify({
           image_id: id,
-          sub_id: "bala",
+          sub_id: getUserId,
           value,
         }),
         headers: {

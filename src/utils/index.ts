@@ -9,6 +9,8 @@ export const mergeCatListData = (
   setIsMerging && setIsMerging(true);
   const catMap = new Map<string, Cat>();
 
+  const getUserId = localStorage?.getItem("boomcat-uid");
+
   // Merge listOfCats
   listOfCats.forEach((cat) => {
     const mergedCat: Cat = {
@@ -25,7 +27,7 @@ export const mergeCatListData = (
 
     if (cat) {
       cat.favourite = {
-        status: cat.sub_id === "bala",
+        status: favourite.sub_id === getUserId,
         id: favourite.id,
       };
     }
@@ -37,16 +39,16 @@ export const mergeCatListData = (
     if (cat) {
       cat.votes = array.reduce(
         (accumulator: CatVote, vote) => {
+          // Calculate vote value for a specific sub_id
+          if (vote.sub_id === getUserId && vote.image_id === cat.id) {
+            accumulator.userVoteValue = vote.value;
+          }
+
           // Calculate total votes with value === 1
           accumulator.totalUpvotes += vote.value === 1 && vote.image_id === cat.id ? 1 : 0;
 
           // Calculate total votes with value === -1
           accumulator.totalDownvotes += vote.value === -1 && vote.image_id === cat.id ? 1 : 0;
-
-          // Calculate vote value for a specific sub_id
-          if (vote.sub_id === "bala" && vote.image_id === cat.id) {
-            accumulator.userVoteValue = vote.value;
-          }
 
           accumulator.voteId = vote.image_id === cat.id && vote.id ? vote.id : null;
 
@@ -64,3 +66,6 @@ export const mergeCatListData = (
   const result = Array.from(catMap.values());
   return result;
 };
+
+// Generate random string with the length of 5
+export const uuid = () => Math.random().toString(36).slice(2, 7);

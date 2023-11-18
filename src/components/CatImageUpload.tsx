@@ -52,10 +52,11 @@ export const CatImageUpload = () => {
   }, []);
 
   const imageUploadHanlder = useCallback(() => {
-    if (file) {
+    const getUserId = localStorage?.getItem("boomcat-uid");
+    if (file && getUserId) {
       const formPayload = new FormData();
       formPayload.append("file", file[0]);
-      formPayload.append("sub_id", "bala");
+      formPayload.append("sub_id", getUserId);
       uploadImage({
         method: "POST",
         url: "/images/upload",

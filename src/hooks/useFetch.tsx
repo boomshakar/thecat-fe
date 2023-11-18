@@ -23,7 +23,7 @@ function useFetch<T>(
         const response = await fetch(BASE_URL + (params?.url || url), {
           method: params?.method || method,
           headers: {
-            "x-api-key": "live_bqYl4DD1L0aOtI4pmyvQlzc7rVXMp9hJPPB1MijmXbmbBV61UJIiAAtxUewCS7XF",
+            "x-api-key": import.meta.env.VITE_APP_API_KEY,
             ...(params?.headers || {}),
           },
           ...((params?.method || method) !== "GET" && { body: params?.body || JSON.stringify(body) }),
