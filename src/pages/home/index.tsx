@@ -1,5 +1,5 @@
 import { Header } from "../../components/Header";
-import { UploadedCatList } from "./components/UploadedCatList";
+import { UploadedCatList } from "../../components/UploadedCatList";
 
 export const Home = () => {
   return (

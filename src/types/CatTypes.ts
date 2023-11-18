@@ -2,6 +2,7 @@ export interface CatVote {
   totalUpvotes: number;
   totalDownvotes: number;
   userVoteValue: number | null;
+  voteId: number | string | null;
 }
 
 export interface Cat {
@@ -15,7 +16,10 @@ export interface Cat {
   original_filename: string;
   breed_ids: null | string[];
   votes: CatVote;
-  favourite: boolean;
+  favourite: {
+    status: boolean;
+    id?: number | string;
+  };
 }
 
 export interface FavouriteCatResult {

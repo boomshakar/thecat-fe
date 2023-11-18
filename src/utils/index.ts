@@ -13,8 +13,8 @@ export const mergeCatListData = (
   listOfCats.forEach((cat) => {
     const mergedCat: Cat = {
       ...cat,
-      votes: { totalUpvotes: 0, totalDownvotes: 0, userVoteValue: null },
-      favourite: false,
+      votes: { totalUpvotes: 0, totalDownvotes: 0, userVoteValue: null, voteId: null },
+      favourite: { status: false },
     };
     catMap.set(cat.id, mergedCat);
   });
@@ -24,7 +24,10 @@ export const mergeCatListData = (
     const cat = catMap.get(favourite.image_id);
 
     if (cat) {
-      cat.favourite = cat.sub_id === "bala";
+      cat.favourite = {
+        status: cat.sub_id === "bala",
+        id: favourite.id,
+      };
     }
   });
 
@@ -35,19 +38,21 @@ export const mergeCatListData = (
       cat.votes = array.reduce(
         (accumulator: CatVote, vote) => {
           // Calculate total votes with value === 1
-          accumulator.totalUpvotes += vote.value === 1 ? 1 : 0;
+          accumulator.totalUpvotes += vote.value === 1 && vote.image_id === cat.id ? 1 : 0;
 
           // Calculate total votes with value === -1
-          accumulator.totalDownvotes += vote.value === -1 ? 1 : 0;
+          accumulator.totalDownvotes += vote.value === -1 && vote.image_id === cat.id ? 1 : 0;
 
           // Calculate vote value for a specific sub_id
-          if (vote.sub_id === "bala") {
+          if (vote.sub_id === "bala" && vote.image_id === cat.id) {
             accumulator.userVoteValue = vote.value;
           }
 
+          accumulator.voteId = vote.image_id === cat.id && vote.id ? vote.id : null;
+
           return accumulator;
         },
-        { totalUpvotes: 0, totalDownvotes: 0, userVoteValue: null }
+        { totalUpvotes: 0, totalDownvotes: 0, userVoteValue: null, voteId: null }
       );
     }
   });
@@ -57,6 +62,5 @@ export const mergeCatListData = (
 
   // Convert the Map values back to an array
   const result = Array.from(catMap.values());
-
   return result;
 };
