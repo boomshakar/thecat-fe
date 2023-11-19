@@ -16,22 +16,21 @@ export const CatImageUpload = () => {
     onSuccess: () => navigate("/"),
   });
 
+  // Effect to handle drag and drop functionality for file input
   useEffect(() => {
-    const supportDrag = () => {
-      const div = document.createElement("div");
-      return (
-        "draggable" in div ||
-        ("ondragstart" in div && "ondrop" in div && "FormData" in window && "FileReader" in window)
-      );
-    };
+    // Check if the browser supports drag and drop
+    const supportDrag = () => "draggable" in document.createElement("div");
 
+    // Get references to HTML elements
     const input = document.getElementById("js-file-input");
     const fileInputEl = document.querySelector(".file-input");
 
+    // Remove drag-related styles if drag and drop are not supported
     if (!supportDrag()) {
       const hasDragEl = document?.querySelector(".has-drag");
       hasDragEl && hasDragEl.classList.remove("has-drag");
     } else {
+      // Add event listeners for drag enter and drag leave to show visual feedback
       const handleDragEnter = () => {
         fileInputEl && fileInputEl.classList.add("file-input--active");
       };
@@ -43,7 +42,7 @@ export const CatImageUpload = () => {
       input?.addEventListener("dragenter", handleDragEnter);
       input?.addEventListener("dragleave", handleDragLeave);
 
-      // Cleanup function
+      // Cleanup function to remove event listeners
       return () => {
         input?.removeEventListener("dragenter", handleDragEnter);
         input?.removeEventListener("dragleave", handleDragLeave);
@@ -51,12 +50,19 @@ export const CatImageUpload = () => {
     }
   }, []);
 
+  // Callback function to handle image upload
   const imageUploadHanlder = useCallback(() => {
+    // Get user ID from local storage
     const getUserId = localStorage?.getItem("boomcat-uid");
+
+    // Check if file and user ID are available
     if (file && getUserId) {
+      // Create a FormData object for the image upload
       const formPayload = new FormData();
       formPayload.append("file", file[0]);
       formPayload.append("sub_id", getUserId);
+
+      // Trigger the image upload API request
       uploadImage({
         method: "POST",
         url: "/images/upload",
@@ -66,12 +72,15 @@ export const CatImageUpload = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]);
 
+  // Effect to trigger image upload when file state is uploaded
   useEffect(() => {
     imageUploadHanlder();
   }, [imageUploadHanlder]);
 
+  // Handler for file input change event
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileInputEl = document.querySelector(".file-input");
+    // Set the selected file and remove active styles
     setFile(e.target.files);
     fileInputEl && fileInputEl.classList.remove("file-input--active");
   };

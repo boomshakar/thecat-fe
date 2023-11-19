@@ -15,68 +15,77 @@ export const UploadedCatList = () => {
   const { data: listOfCatVotes, triggerFetch: refetchListOfCatVotes } = useFetch<CatVoteResult[]>("/votes");
 
   const { triggerFetch: addToFavourite, loading: isAddingFav } = useFetch<FavouriteCatResult[]>("/favourites", false, {
-    onSuccess: () => {
-      refetchListOfFavouritedCats();
-      setImLoading({ id: [""] });
-    },
+    onSuccess: () => refetchListOfFavouritedCats(),
   });
+
   const { triggerFetch: removeFromFavourite, loading: isRemovingFav } = useFetch<FavouriteCatResult[]>(
     "/favourites",
     false,
     {
-      onSuccess: () => {
-        refetchListOfFavouritedCats();
-        setImLoading({ id: [""] });
-      },
+      onSuccess: () => refetchListOfFavouritedCats(),
     }
   );
+
   const { triggerFetch: voteForACat } = useFetch<FavouriteCatResult[]>("/vote", false, {
-    onSuccess: () => {
-      refetchListOfCatVotes();
-      setImLoading({ id: [""] });
-    },
+    onSuccess: () => refetchListOfCatVotes(),
   });
+
   const { triggerFetch: removeFromVote } = useFetch<FavouriteCatResult[]>("/votes", false, {
     onSuccess: () => refetchListOfCatVotes(),
   });
 
+  // Effect to merge cat data when all necessary data is available
   useEffect(() => {
     if (!!listOfCats && !!listOfFavouritedCats && !!listOfCatVotes) {
       setAllCatImages(mergeCatListData(listOfCats, listOfFavouritedCats, listOfCatVotes, setIsLoading));
     } // else possible handle errors
   }, [listOfCatVotes, listOfCats, listOfFavouritedCats]);
 
-  const handleCatFavouriteToggle = ({ id, favourite }: Cat) => {
-    setImLoading((prevData) => ({ id: [...prevData.id, id] }));
+  // Handler for toggling cat favorites
+  const handleCatFavouriteToggle = async ({ id, favourite }: Cat) => {
+    setImLoading((prevData) => ({ id: [...prevData.id, id] })); // Show loading indicator for the specific cat
+
+    // Get user ID from local storage
     const getUserId = localStorage?.getItem("boomcat-uid");
-    if (!favourite.status) {
-      addToFavourite({
-        method: "POST",
-        url: "/favourites",
-        body: JSON.stringify({
-          image_id: id,
-          sub_id: getUserId,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    } else {
-      removeFromFavourite({
-        url: `/favourites/${favourite.id}`,
-        method: "DELETE",
-      });
+
+    try {
+      if (!favourite.status) {
+        // Add to favorites if not favorited
+        await addToFavourite({
+          method: "POST",
+          url: "/favourites",
+          body: JSON.stringify({
+            image_id: id,
+            sub_id: getUserId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        // Remove from favorites if already favorited
+        await removeFromFavourite({
+          url: `/favourites/${favourite.id}`,
+          method: "DELETE",
+        });
+      }
+    } finally {
+      setImLoading((prevData) => ({ id: prevData.id.filter((data) => data !== id) })); // Hide loading indicator
     }
   };
 
+  // Handler for voting on cat images
   const voteUpDownHandler = ({ id, votes }: Cat, value: number) => {
     const getUserId = localStorage?.getItem("boomcat-uid");
+
     if (votes.voteId && votes.userVoteValue === value) {
+      // If already voted with the same value, remove the vote
       removeFromVote({
         url: `/votes/${votes.voteId}`,
         method: "DELETE",
       });
     } else {
+      // Otherwise, vote with the specified value
       voteForACat({
         method: "POST",
         url: "/votes",

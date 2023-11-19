@@ -1,15 +1,28 @@
 import type { Cat, CatVote, CatVoteResult, FavouriteCatResult } from "../types";
 
+/**
+ * Merges data from different lists (listOfCats, listOfFavouritedCats, listOfCatVotes)
+ * into a single array of Cat objects.
+ *
+ * @param listOfCats - List of Cat objects.
+ * @param listOfFavouritedCats - List of FavouriteCatResult objects.
+ * @param listOfCatVotes - List of CatVoteResult objects.
+ * @param setIsMerging - Optional state setter for setting loading state.
+ * @returns Merged array of Cat objects.
+ */
 export const mergeCatListData = (
   listOfCats: Cat[],
   listOfFavouritedCats: FavouriteCatResult[],
   listOfCatVotes: CatVoteResult[],
   setIsMerging?: React.Dispatch<React.SetStateAction<boolean>>
 ): Cat[] => {
+  // If setIsMerging is provided, set loading state to true
   setIsMerging && setIsMerging(true);
-  const catMap = new Map<string, Cat>();
 
+  // Retrieve the user ID from local storage
   const getUserId = localStorage?.getItem("boomcat-uid");
+  // Initialize a map to store merged Cat objects
+  const catMap = new Map<string, Cat>();
 
   // Merge listOfCats
   listOfCats.forEach((cat) => {
@@ -18,6 +31,7 @@ export const mergeCatListData = (
       votes: { totalUpvotes: 0, totalDownvotes: 0, userVoteValue: null, voteId: null },
       favourite: { status: false },
     };
+    // Create a mergedCat object with initial vote and favourite values
     catMap.set(cat.id, mergedCat);
   });
 
@@ -25,6 +39,7 @@ export const mergeCatListData = (
   listOfFavouritedCats.forEach((favourite) => {
     const cat = catMap.get(favourite.image_id);
 
+    // If corresponding Cat exists, update the favourite status
     if (cat) {
       cat.favourite = {
         status: favourite.sub_id === getUserId,
