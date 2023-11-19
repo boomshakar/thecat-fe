@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import { BASE_URL } from "../constants";
 import type { FetchOptions } from "../types";
-
-const BASE_URL = "https://api.thecatapi.com/v1";
 
 /**
  * Custom hook for making API requests using the Fetch API.
@@ -36,7 +35,7 @@ function useFetch<T>(
           method: params?.method || method,
           headers: {
             "x-api-key": import.meta.env.VITE_APP_API_KEY,
-            ...(params?.headers || {}),
+            ...(params?.headers || options?.headers || {}),
           },
           ...((params?.method || method) !== "GET" && { body: params?.body || JSON.stringify(body) }),
         });
@@ -52,6 +51,7 @@ function useFetch<T>(
 
         // Execute the onSuccess callback if provided
         onSuccess && onSuccess(responseData);
+        params?.onSuccess && params.onSuccess(responseData);
       } catch (error) {
         // If an error occurs during the API request, update the error state
         setData(undefined);
@@ -61,7 +61,7 @@ function useFetch<T>(
         setLoading(false);
       }
     },
-    [url, method, body, onSuccess]
+    [url, method, options?.headers, body, onSuccess]
   );
 
   // Effect to trigger the API request on mount if autoFetch is true
@@ -71,7 +71,9 @@ function useFetch<T>(
     }
   }, [autoFetch, fetchData]);
 
-  // Callback function for manually triggering the API request
+  /**
+   * Callback function for manually triggering the API request
+   */
   const triggerFetch = useCallback(
     async (params?: FetchOptions) => {
       // Call the fetchData function to make the API request

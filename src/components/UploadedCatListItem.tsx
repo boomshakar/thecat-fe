@@ -25,22 +25,15 @@ export const UploadedCatListItem = ({
       </div>
 
       <div className="cat_list_item_cta">
-        <button
-          className={`font-lato upvote${isVotedUp ? " active" : ""}`}
-          onClick={() => voteUpDownHandler(data, 1)}
-          // disabled={isVotedUp}
-        >
+        <button className={`font-lato upvote${isVotedUp ? " active" : ""}`} onClick={() => voteUpDownHandler(data, 1)}>
           <ArrowIcon type="upvote" />
-          {/* <span>{`${data.votes.totalUpvotes} ${data.votes.totalUpvotes > 1 ? "votes" : "vote"}`}</span> */}
         </button>
 
         <button
           className={`font-jost downvote${isVotedDown ? " active" : ""}`}
           onClick={() => voteUpDownHandler(data, -1)}
-          // disabled={isVotedDown}
         >
           <ArrowIcon type="downvote" />
-          {/* <span>{`${data.votes.totalDownvotes} ${data.votes.totalDownvotes > 1 ? "votes" : "vote"}`}</span> */}
         </button>
       </div>
 

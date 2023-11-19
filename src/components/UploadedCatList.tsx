@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import useFetch from "../hooks/useFetch";
+import useMutation from "../hooks/useMutation";
+import useQuery from "../hooks/useQuery";
 import { Cat, CatVoteResult, FavouriteCatResult } from "../types";
 import { mergeCatListData } from "../utils";
 import { UploadedCatListItem } from "./UploadedCatListItem";
@@ -9,30 +10,18 @@ export const UploadedCatList = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [imLoading, setImLoading] = useState({ id: [""] });
 
-  const { data: listOfCats } = useFetch<Cat[]>("/images/?limit=10&page=0&order=DESC");
+  const { data: listOfCats } = useQuery<Cat[]>("/images/?limit=10&page=0&order=DESC");
   const { data: listOfFavouritedCats, triggerFetch: refetchListOfFavouritedCats } =
-    useFetch<FavouriteCatResult[]>("/favourites");
-  const { data: listOfCatVotes, triggerFetch: refetchListOfCatVotes } = useFetch<CatVoteResult[]>("/votes");
+    useQuery<FavouriteCatResult[]>("/favourites");
+  const { data: listOfCatVotes, triggerFetch: refetchListOfCatVotes } = useQuery<CatVoteResult[]>("/votes");
 
-  const { triggerFetch: addToFavourite, loading: isAddingFav } = useFetch<FavouriteCatResult[]>("/favourites", false, {
-    onSuccess: () => refetchListOfFavouritedCats(),
-  });
+  const { triggerFetch: addToFavourite, loading: isAddingFav } = useMutation();
 
-  const { triggerFetch: removeFromFavourite, loading: isRemovingFav } = useFetch<FavouriteCatResult[]>(
-    "/favourites",
-    false,
-    {
-      onSuccess: () => refetchListOfFavouritedCats(),
-    }
-  );
+  const { triggerFetch: removeFromFavourite, loading: isRemovingFav } = useMutation();
 
-  const { triggerFetch: voteForACat } = useFetch<FavouriteCatResult[]>("/vote", false, {
-    onSuccess: () => refetchListOfCatVotes(),
-  });
+  const { triggerFetch: voteForACat } = useMutation();
 
-  const { triggerFetch: removeFromVote } = useFetch<FavouriteCatResult[]>("/votes", false, {
-    onSuccess: () => refetchListOfCatVotes(),
-  });
+  const { triggerFetch: removeFromVote } = useMutation();
 
   // Effect to merge cat data when all necessary data is available
   useEffect(() => {
@@ -58,15 +47,14 @@ export const UploadedCatList = () => {
             image_id: id,
             sub_id: getUserId,
           }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          onSuccess: () => refetchListOfFavouritedCats(),
         });
       } else {
         // Remove from favorites if already favorited
         await removeFromFavourite({
           url: `/favourites/${favourite.id}`,
           method: "DELETE",
+          onSuccess: () => refetchListOfFavouritedCats(),
         });
       }
     } finally {
@@ -83,6 +71,7 @@ export const UploadedCatList = () => {
       removeFromVote({
         url: `/votes/${votes.voteId}`,
         method: "DELETE",
+        onSuccess: () => refetchListOfCatVotes(),
       });
     } else {
       // Otherwise, vote with the specified value
@@ -94,9 +83,7 @@ export const UploadedCatList = () => {
           sub_id: getUserId,
           value,
         }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        onSuccess: () => refetchListOfCatVotes(),
       });
     }
   };

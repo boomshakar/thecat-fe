@@ -1,27 +1,58 @@
-# React + TypeScript + Vite
+# TheCat-FE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project structure
 
-Currently, two official plugins are available:
+### Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js 18+ and yarn
 
-## Expanding the ESLint configuration
+### Getting started
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Run the following command on your local environment:
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+```shell
+git clone https://github.com/boomshakar/thecat-fe.git
+cd ct-dashboard-new
+yarn
+# or
+yarn install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Then, you can run locally in development mode:
+
+```shell
+yarn dev
+# or
+yarn dev --host  # to expose to your network
+```
+
+Open http://localhost:5173 with your favourite browser to see the project.
+
+```shell
+
+├── public                          # Public assets folder
+├── src                             # Base folder of the application
+│   ├── assets                      # Scoped assets folder
+│   ├── components                  # Global components
+│   ├── constants                   # Reusable static variables
+│   ├── hooks                       # Extendable hooks folder
+│   ├── pages                       # Defined pages based on folder name
+│   ├── styles                      # SCSS Styles
+│   ├── types                       # Folde for typed annoations
+│   ├── utils                       # Reuseable snippets
+│   ├── App.tsx                     # Sub entry point of the app
+│   └── main.tsx                    # Entry point of the app
+├── .env.example                    # enviroment variables sample
+├── .env.local                      # enviroment variables locally used but git ignored
+├── .eslintrc.json                  # ESLint configuration
+├── .gitignore                      # gitignore
+├── .prettierrc.json                # Prettier configuration
+├── .index.html                     # Prettier configuration
+├── .package.json                   # Pakeges used in the app
+├── README.md                       # This file*
+├── .tsconfig.json                  # Typescript configuration
+├── .tsconfig.node.json             # Extended Typescript configuration
+├── .vite.config.js                 # Vite app configuration
+└── .yarn.lock
+
+```

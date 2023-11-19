@@ -1,20 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UploadIcon } from "../assets/icons";
-import useFetch from "../hooks/useFetch";
+import useMutation from "../hooks/useMutation";
 
 export const CatImageUpload = () => {
   const [file, setFile] = useState<FileList | null>(null);
 
   const navigate = useNavigate();
 
-  const {
-    triggerFetch: uploadImage,
-    loading,
-    error,
-  } = useFetch("/images/upload", false, {
-    onSuccess: () => navigate("/"),
-  });
+  const { triggerFetch: uploadImage, loading, error } = useMutation();
 
   // Effect to handle drag and drop functionality for file input
   useEffect(() => {
@@ -67,6 +61,8 @@ export const CatImageUpload = () => {
         method: "POST",
         url: "/images/upload",
         body: formPayload,
+        headers: {},
+        onSuccess: () => navigate("/"),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,7 +101,7 @@ export const CatImageUpload = () => {
               <div className="is-loading-icon"></div>
             </div>
           ) : error ? (
-            <span className="font-lato font-700 error_resp">Sorry, an error occured. Pleas try again later</span>
+            <span className="font-lato font-700 error_resp">Sorry, an error occured. Please try again later</span>
           ) : !file ? (
             <span id="js-file-name" className="file-name">
               No file selected
