@@ -7,8 +7,8 @@ export const Header = () => {
         <img src={leadBannerImg} alt="lead-img" />
       </div>
       <div className="head_banner_content text-white text-center">
-        <h1 className="font-lato font-700">TOYS FOR YOUR PET</h1>
-        <p className="font-300">Style in handcrafts, made by professionals for you</p>
+        <h1 className="font-lato font-700">THE CAT LIST</h1>
+        <p className="font-300">Feel free to upload your cat, add to favourite, upvote or downvote </p>
       </div>
     </header>
   );
