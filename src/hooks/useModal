@@ -1,0 +1,64 @@
+import { useRef } from "react";
+
+import { Modal2 } from "@/components/Modal";
+import type { ModalProps2 } from "@/components/Modal/ModalProps";
+
+export type ModalProps2 = {
+  children?: React.ReactNode;
+  onBackdropClick?: () => void;
+  modalBoxClassName?: string;
+  // you can add more classNames as per you level of customisation
+};
+
+export type UseModalResp = {
+  modal: React.ReactNode;
+  closeModal: () => void;
+  openModal: () => void;
+  modalBoxClassName?: string;
+};
+
+export type UseModalProps = Omit<ModalProps2, "modalId" | "onBackdropClick"> & {
+  shouldAllowBackdropClick?: boolean; // if it is true then modal can be closed
+  onModalOpen?: () => void; // this function will be called on calling of openModal
+  onModalClose?: () => void; // this function will be called on calling of closeModal
+};
+
+export const useModal = ({
+  children,
+  modalBoxClassName,
+  shouldAllowBackdropClick = true,
+  onModalClose,
+  onModalOpen,
+}: UseModalProps): UseModalResp => {
+  const ref = useRef<HTMLDialogElement | null>(null);
+
+  const closeModal = () => {
+    if (onModalClose) onModalClose();
+    ref.current?.close();
+  };
+
+  const openModal = () => {
+    if (onModalOpen) onModalOpen();
+    ref.current?.showModal();
+  };
+
+  const modal: React.ReactNode = (
+    <Modal2
+      onBackdropClick={() => {
+        if (shouldAllowBackdropClick) {
+          closeModal();
+        }
+      }}
+      ref={ref}
+      modalBoxClassName={modalBoxClassName}
+    >
+      {children}
+    </Modal2>
+  );
+
+  return {
+    closeModal,
+    openModal,
+    modal,
+  };
+};
