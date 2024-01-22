@@ -1,0 +1,25 @@
+import { forwardRef } from "react";
+
+import type { ModalProps2 } from "./ModalProps";
+
+const Modal2 = forwardRef<HTMLDialogElement, ModalProps2>(({ children, modalBoxClassName, onBackdropClick }, ref) => {
+  return (
+    <dialog ref={ref} className="modal">
+      <div className={`modal-box ${modalBoxClassName ?? ""}`}>{children}</div>
+      <form method="dialog" className="modal-backdrop">
+        <button
+          type="button"
+          onClick={() => {
+            if (onBackdropClick) onBackdropClick();
+          }}
+        >
+          close
+        </button>
+      </form>
+    </dialog>
+  );
+});
+
+Modal2.displayName = "Modal2";
+
+export default Modal2;
